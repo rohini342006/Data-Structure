@@ -1,0 +1,57 @@
+#include <stdio.h>
+
+    while (i >= 0) {
+        if (isdigit(prefix[i])) {
+            push(&s, prefix[i] - '0');
+        } else if (isOperator(prefix[i])) {
+            val1 = pop(&s);
+            val2 = pop(&s);
+            switch (prefix[i]) {
+                case '+': push(&s, val1 + val2); break;
+                case '-': push(&s, val1 - val2); break;
+                case '*': push(&s, val1 * val2); break;
+                case '/': push(&s, val1 / val2); break;
+                case '^': push(&s, val1 ^ val2); break;
+            }
+        }
+        i--;
+    }
+    return pop(&s);
+}
+
+void reverse(char* exp) {
+    int n = strlen(exp);
+    for (int i = 0; i < n / 2; i++) {
+        char temp = exp[i];
+        exp[i] = exp[n - i - 1];
+        exp[n - i - 1] = temp;
+    }
+}
+
+int main() {
+    char infix[MAX], postfix[MAX], prefix[MAX];
+    printf("Enter infix expression: ");
+    scanf("%s", infix);
+
+    infixToPostfix(infix, postfix);
+    printf("Postfix expression: %s\n", postfix);
+    printf("Postfix evaluation result: %d\n", evaluatePostfix(postfix));
+
+    // Convert postfix to prefix by reversing
+    strcpy(prefix, infix);
+    reverse(prefix);
+    for (int i = 0; prefix[i] != '\0'; i++) {
+        if (prefix[i] == '(') {
+            prefix[i] = ')';
+        } else if (prefix[i] == ')') {
+            prefix[i] = '(';
+        }
+    }
+    infixToPostfix(prefix, postfix);
+    reverse(postfix);
+    strcpy(prefix, postfix);
+    printf("Prefix expression: %s\n", prefix);
+    printf("Prefix evaluation result: %d\n", evaluatePrefix(prefix));
+
+    return 0;
+}
